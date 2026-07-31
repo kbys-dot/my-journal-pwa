@@ -60,6 +60,15 @@
 
     <!-- 新規 / 編集ビュー -->
     <section id="view-new" class="view hidden" data-view="new">
+      <div id="prompt-card" class="prompt-card">
+        <div class="prompt-label">💡 今日のお題</div>
+        <p id="prompt-text" class="prompt-text"></p>
+        <div class="prompt-actions">
+          <button type="button" id="prompt-shuffle" class="prompt-shuffle-btn">🔄 別のお題</button>
+          <button type="button" id="prompt-use" class="prompt-use-btn">タイトルに使う</button>
+        </div>
+      </div>
+
       <form id="entry-form" class="entry-form">
         <label class="field-label" for="entry-date">日付</label>
         <input id="entry-date" type="date" required>

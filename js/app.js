@@ -5,6 +5,54 @@
   const MOOD_EMOJI = { 1: "😢", 2: "😕", 3: "😐", 4: "🙂", 5: "😄" };
   const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
 
+  const PROMPTS = [
+    "今日、一番小さく感じた「よかったこと」は何ですか？",
+    "今日ありがとうと伝えたい人は誰ですか？",
+    "今日の自分を一言で表すと？",
+    "最近、心がふっと軽くなった瞬間は？",
+    "今日食べたもので、一番おいしかったものは？",
+    "今、少し気になっていることを書き出してみましょう",
+    "今日、誰かの優しさを感じた出来事は？",
+    "今週やり遂げたいことを1つ挙げるなら？",
+    "最近笑ったのはいつ、どんな時でしたか？",
+    "今日の天気や空の様子はどうでしたか？",
+    "今、一番リラックスできる場所はどこですか？",
+    "最近学んだこと、気づいたことはありますか？",
+    "今日一日を振り返って、自分を褒めるとしたら？",
+    "最近読んだ本や見た映画で印象に残っているものは？",
+    "今、挑戦してみたいことは何ですか？",
+    "今日、誰かに親切にできたことはありますか？",
+    "最近感じたちょっとした幸せは？",
+    "今の自分に必要な休息はどんなものですか？",
+    "今日一番印象に残った会話は？",
+    "1年後の自分に伝えたいことは？",
+    "最近悩んでいることを、誰かに話すように書いてみましょう",
+    "今日の気分を天気にたとえると？",
+    "最近お気に入りになった音楽や香りは？",
+    "今日、五感で感じた心地よいものは？",
+    "今、感謝していることを3つ書き出してみましょう",
+    "最近、少し無理をしていないか振り返ってみましょう",
+    "今日出会った小さな発見は？",
+    "自分にとって「今日の勝利」と呼べることは？",
+    "最近、誰かと過ごした時間で心が温まったのは？",
+    "今の自分を励ますとしたら、どんな言葉をかけますか？",
+    "今日、思わず立ち止まって見とれたものは？",
+    "最近、体調や気分の変化で気づいたことは？",
+    "今週の終わりに、どんな気持ちでいたいですか？",
+    "今日一番集中できた時間は何をしていた時ですか？",
+    "最近、自分にご褒美をあげたことはありますか？",
+    "今、心配ごとより楽しみなことを考えてみましょう",
+    "今日、誰かの言葉に励まされたことは？",
+    "最近チャレンジしてみて良かったことは？",
+    "今日という日を色にたとえると何色ですか？",
+    "今、少し先延ばしにしていることは何ですか？",
+    "最近の自分の成長を感じた瞬間は？",
+    "今日、静かに過ごせた時間はありましたか？",
+    "この一週間で一番心に残っている出来事は？",
+    "今の暮らしの中で、変えてみたいことは？",
+    "今日、自分を大切にできたと思う瞬間は？",
+  ];
+
   /* ===== ストレージ層 ===== */
 
   const Store = {
@@ -69,6 +117,18 @@
     }[c]));
   }
 
+  function hashString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash * 31 + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash);
+  }
+
+  function todayPromptIndex() {
+    return hashString(todayStr()) % PROMPTS.length;
+  }
+
   /* ===== 状態 ===== */
 
   const state = {
@@ -77,6 +137,7 @@
     calendarMonth: new Date().getMonth(), // 0-11
     selectedDay: null, // "YYYY-MM-DD" | null
     editingId: null,
+    promptIndex: null,
   };
 
   /* ===== タブ切り替え ===== */
@@ -271,7 +332,34 @@
   const moodPicker = document.getElementById("mood-picker");
   const deleteBtn = document.getElementById("delete-entry-btn");
   const cancelEditBtn = document.getElementById("cancel-edit-btn");
+  const promptCard = document.getElementById("prompt-card");
+  const promptText = document.getElementById("prompt-text");
   let selectedMood = null;
+
+  function renderPrompt() {
+    promptText.textContent = PROMPTS[state.promptIndex];
+  }
+
+  function showTodayPrompt() {
+    state.promptIndex = todayPromptIndex();
+    promptCard.classList.remove("hidden");
+    renderPrompt();
+  }
+
+  document.getElementById("prompt-shuffle").addEventListener("click", () => {
+    if (PROMPTS.length <= 1) return;
+    let next;
+    do {
+      next = Math.floor(Math.random() * PROMPTS.length);
+    } while (next === state.promptIndex);
+    state.promptIndex = next;
+    renderPrompt();
+  });
+
+  document.getElementById("prompt-use").addEventListener("click", () => {
+    titleInput.value = PROMPTS[state.promptIndex];
+    bodyInput.focus();
+  });
 
   moodPicker.addEventListener("click", (e) => {
     const btn = e.target.closest(".mood-btn");
@@ -291,6 +379,7 @@
     deleteBtn.classList.add("hidden");
     cancelEditBtn.classList.add("hidden");
     if (state.currentView === "new") headerTitle.textContent = "新規の日記";
+    showTodayPrompt();
   }
 
   function openForEdit(id) {
@@ -306,6 +395,7 @@
     });
     deleteBtn.classList.remove("hidden");
     cancelEditBtn.classList.remove("hidden");
+    promptCard.classList.add("hidden");
     switchView("new");
   }
 

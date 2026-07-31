@@ -326,6 +326,13 @@ main#views {
   padding: 0 4px;
 }
 
+.garden-flowers-hint {
+  margin: 6px 0 0;
+  font-size: 0.7rem;
+  color: var(--text-faint);
+  text-align: center;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .garden-card, .garden-tree, .garden-tree.in-bloom::before,
   .garden-tree.in-bloom::after, .garden-flower {

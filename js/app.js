@@ -239,6 +239,7 @@
 
   const FLOWER_ICONS = ["🌸", "🌼", "🌻", "🍎"];
   const MAX_RENDERED_FLOWERS = 200;
+  const ENTRIES_PER_FLOWER = 10;
 
   const GROWTH_STAGES = [
     { min: 0, emoji: "🌰", label: "たね" },
@@ -256,6 +257,7 @@
   const gardenStatEntriesEl = document.getElementById("garden-stat-entries");
   const gardenStatWaterEl = document.getElementById("garden-stat-water");
   const gardenFlowersEl = document.getElementById("garden-flowers");
+  const gardenFlowersHintEl = document.getElementById("garden-flowers-hint");
 
   function getGrowthStage(totalChars) {
     let index = 0;
@@ -293,19 +295,24 @@
     if (totalEntries === 0) {
       gardenFlowersEl.classList.add("empty");
       gardenFlowersEl.innerHTML = "はじめての日記を書くと、ここに花が咲きます";
+      gardenFlowersHintEl.textContent = "";
       return;
     }
 
     gardenFlowersEl.classList.remove("empty");
-    const shown = Math.min(totalEntries, MAX_RENDERED_FLOWERS);
+    const flowerCount = Math.floor(totalEntries / ENTRIES_PER_FLOWER);
+    const shown = Math.min(flowerCount, MAX_RENDERED_FLOWERS);
     let html = "";
     for (let i = 0; i < shown; i++) {
       html += `<span class="garden-flower">${FLOWER_ICONS[i % FLOWER_ICONS.length]}</span>`;
     }
-    if (totalEntries > MAX_RENDERED_FLOWERS) {
-      html += `<span class="garden-flower-more">+${(totalEntries - MAX_RENDERED_FLOWERS).toLocaleString()}</span>`;
+    if (flowerCount > MAX_RENDERED_FLOWERS) {
+      html += `<span class="garden-flower-more">+${(flowerCount - MAX_RENDERED_FLOWERS).toLocaleString()}</span>`;
     }
     gardenFlowersEl.innerHTML = html;
+
+    const remaining = ENTRIES_PER_FLOWER - (totalEntries % ENTRIES_PER_FLOWER);
+    gardenFlowersHintEl.textContent = `次の花まであと${remaining}冊`;
   }
 
   /* ===== カレンダー & 一覧 ===== */

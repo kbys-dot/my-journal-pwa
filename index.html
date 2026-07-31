@@ -36,6 +36,37 @@
 
     <!-- 一覧ビュー -->
     <section id="view-list" class="view" data-view="list">
+
+      <div id="garden-card" class="garden-card">
+        <div class="garden-header">
+          <span class="garden-title">🌿 日記の庭</span>
+          <span id="garden-stage-label" class="garden-stage-label"></span>
+        </div>
+
+        <div class="garden-scene">
+          <div id="garden-tree" class="garden-tree" aria-hidden="true">🌱</div>
+          <div class="garden-pot" aria-hidden="true"></div>
+        </div>
+
+        <div class="garden-progress-track" aria-hidden="true">
+          <div id="garden-progress-fill" class="garden-progress-fill"></div>
+        </div>
+        <p id="garden-progress-hint" class="garden-progress-hint"></p>
+
+        <div class="garden-stats">
+          <div class="garden-stat">
+            <span id="garden-stat-entries" class="garden-stat-value">0</span>
+            <span class="garden-stat-label">冊の日記</span>
+          </div>
+          <div class="garden-stat">
+            <span id="garden-stat-water" class="garden-stat-value">0ml</span>
+            <span class="garden-stat-label">注いだ水（累計文字数）</span>
+          </div>
+        </div>
+
+        <div id="garden-flowers" class="garden-flowers" aria-label="これまで書いた日記の数だけ咲く花"></div>
+      </div>
+
       <div class="month-nav">
         <button id="prev-month" class="icon-btn" aria-label="前の月">‹</button>
         <button id="month-label" class="month-label" aria-live="polite"></button>

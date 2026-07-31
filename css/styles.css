@@ -16,6 +16,11 @@
   --border: rgba(231, 226, 214, 0.08);
   --shadow: rgba(0, 0, 0, 0.35);
 
+  --garden-grad-start: #24403a;
+  --garden-grad-end: #2c3b2e;
+  --garden-progress-track: rgba(231, 226, 214, 0.12);
+  --garden-pot: rgba(231, 226, 214, 0.1);
+
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
@@ -39,6 +44,11 @@
     --danger: #b4553f;
     --border: rgba(47, 42, 34, 0.08);
     --shadow: rgba(47, 42, 34, 0.12);
+
+    --garden-grad-start: #eaf6ee;
+    --garden-grad-end: #fdf1ec;
+    --garden-progress-track: rgba(47, 42, 34, 0.08);
+    --garden-pot: rgba(47, 42, 34, 0.08);
   }
 }
 
@@ -132,6 +142,195 @@ main#views {
 
 .tab-btn.active {
   color: var(--accent-strong);
+}
+
+/* ===== 日記の庭（育成カード） ===== */
+
+.garden-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: linear-gradient(155deg, var(--garden-grad-start), var(--garden-grad-end));
+  padding: 16px 18px 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 20px var(--shadow);
+  animation: garden-card-in 0.5s ease both;
+}
+
+@keyframes garden-card-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.garden-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.garden-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.garden-stage-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+  background: rgba(127, 179, 168, 0.16);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.garden-scene {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 96px;
+  margin: 4px 0 2px;
+}
+
+.garden-tree {
+  font-size: 3.2rem;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  transform-origin: bottom center;
+  animation: garden-sway 4.5s ease-in-out infinite, garden-pop 0.5s ease both;
+  transition: font-size 0.3s ease;
+}
+
+.garden-tree.in-bloom::before,
+.garden-tree.in-bloom::after {
+  content: "🌸";
+  position: absolute;
+  font-size: 1.1rem;
+  animation: garden-petal-float 3.2s ease-in-out infinite;
+}
+
+.garden-tree.in-bloom::before { left: -14px; top: 6px; animation-delay: 0s; }
+.garden-tree.in-bloom::after { right: -14px; top: 18px; animation-delay: 1.4s; }
+
+@keyframes garden-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+@keyframes garden-pop {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes garden-petal-float {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+  50% { transform: translateY(-8px) rotate(12deg); opacity: 1; }
+  100% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+}
+
+.garden-pot {
+  position: absolute;
+  bottom: 0;
+  width: 64px;
+  height: 14px;
+  border-radius: 0 0 10px 10px;
+  background: var(--garden-pot);
+}
+
+.garden-progress-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--garden-progress-track);
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.garden-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  width: 0%;
+  transition: width 0.6s ease;
+}
+
+.garden-progress-hint {
+  margin: 0 0 14px;
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.garden-stats {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.garden-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg-card);
+  border-radius: 14px;
+  padding: 10px 6px;
+}
+
+.garden-stat-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  font-family: "Poppins", var(--font);
+}
+
+.garden-stat-label {
+  font-size: 0.68rem;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.garden-flowers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-height: 76px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.garden-flowers::-webkit-scrollbar { display: none; }
+
+.garden-flowers.empty {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-faint);
+  text-align: center;
+  padding: 6px 0 0;
+}
+
+.garden-flower {
+  font-size: 1.05rem;
+  line-height: 1;
+  animation: garden-pop 0.4s ease both;
+}
+
+.garden-flower-more {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  align-self: center;
+  padding: 0 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-card, .garden-tree, .garden-tree.in-bloom::before,
+  .garden-tree.in-bloom::after, .garden-flower {
+    animation: none !important;
+  }
 }
 
 /* ===== 月ナビゲーション & カレンダー ===== */

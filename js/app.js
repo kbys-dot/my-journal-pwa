@@ -235,6 +235,79 @@
     });
   });
 
+  /* ===== 日記の庭（育成カード） ===== */
+
+  const FLOWER_ICONS = ["🌸", "🌼", "🌻", "🍎"];
+  const MAX_RENDERED_FLOWERS = 200;
+
+  const GROWTH_STAGES = [
+    { min: 0, emoji: "🌰", label: "たね" },
+    { min: 50, emoji: "🌱", label: "発芽" },
+    { min: 300, emoji: "🌿", label: "若葉" },
+    { min: 1000, emoji: "🪴", label: "苗木" },
+    { min: 3000, emoji: "🌳", label: "木" },
+    { min: 8000, emoji: "🌳", label: "満開の大樹" },
+  ];
+
+  const gardenTreeEl = document.getElementById("garden-tree");
+  const gardenStageLabelEl = document.getElementById("garden-stage-label");
+  const gardenProgressFillEl = document.getElementById("garden-progress-fill");
+  const gardenProgressHintEl = document.getElementById("garden-progress-hint");
+  const gardenStatEntriesEl = document.getElementById("garden-stat-entries");
+  const gardenStatWaterEl = document.getElementById("garden-stat-water");
+  const gardenFlowersEl = document.getElementById("garden-flowers");
+
+  function getGrowthStage(totalChars) {
+    let index = 0;
+    for (let i = 0; i < GROWTH_STAGES.length; i++) {
+      if (totalChars >= GROWTH_STAGES[i].min) index = i;
+    }
+    return index;
+  }
+
+  function renderGardenCard() {
+    const totalEntries = entries.length;
+    const totalChars = entries.reduce((sum, e) => sum + (e.body || "").length, 0);
+
+    const stageIndex = getGrowthStage(totalChars);
+    const stage = GROWTH_STAGES[stageIndex];
+    const isMaxStage = stageIndex === GROWTH_STAGES.length - 1;
+    const nextStage = GROWTH_STAGES[stageIndex + 1];
+
+    gardenTreeEl.textContent = stage.emoji;
+    gardenTreeEl.classList.toggle("in-bloom", isMaxStage);
+    gardenStageLabelEl.textContent = stage.label;
+
+    if (isMaxStage) {
+      gardenProgressFillEl.style.width = "100%";
+      gardenProgressHintEl.textContent = "満開の大樹に成長しました🌸";
+    } else {
+      const progress = ((totalChars - stage.min) / (nextStage.min - stage.min)) * 100;
+      gardenProgressFillEl.style.width = `${Math.max(4, Math.min(100, progress))}%`;
+      gardenProgressHintEl.textContent = `次の「${nextStage.label}」まであと${(nextStage.min - totalChars).toLocaleString()}ml`;
+    }
+
+    gardenStatEntriesEl.textContent = totalEntries.toLocaleString();
+    gardenStatWaterEl.textContent = `${totalChars.toLocaleString()}ml`;
+
+    if (totalEntries === 0) {
+      gardenFlowersEl.classList.add("empty");
+      gardenFlowersEl.innerHTML = "はじめての日記を書くと、ここに花が咲きます";
+      return;
+    }
+
+    gardenFlowersEl.classList.remove("empty");
+    const shown = Math.min(totalEntries, MAX_RENDERED_FLOWERS);
+    let html = "";
+    for (let i = 0; i < shown; i++) {
+      html += `<span class="garden-flower">${FLOWER_ICONS[i % FLOWER_ICONS.length]}</span>`;
+    }
+    if (totalEntries > MAX_RENDERED_FLOWERS) {
+      html += `<span class="garden-flower-more">+${(totalEntries - MAX_RENDERED_FLOWERS).toLocaleString()}</span>`;
+    }
+    gardenFlowersEl.innerHTML = html;
+  }
+
   /* ===== カレンダー & 一覧 ===== */
 
   const calendarGrid = document.getElementById("calendar-grid");
@@ -269,6 +342,8 @@
   }
 
   function renderCalendarAndList() {
+    renderGardenCard();
+
     const { calendarYear: year, calendarMonth: month } = state;
     monthLabel.textContent = `${year}年${month + 1}月`;
 

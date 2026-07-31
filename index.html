@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>わたしの日記</title>
+
+<meta name="theme-color" content="#1b262c">
+<meta name="description" content="毎日の気分と出来事を記録する、自分専用のジャーナリングアプリ">
+
+<link rel="manifest" href="manifest.json">
+
+<!-- iOS ホーム画面対応 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="日記">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <header class="app-header">
+    <h1 id="header-title">一覧</h1>
+  </header>
+
+  <main id="views">
+
+    <!-- 一覧ビュー -->
+    <section id="view-list" class="view" data-view="list">
+      <div class="month-nav">
+        <button id="prev-month" class="icon-btn" aria-label="前の月">‹</button>
+        <button id="month-label" class="month-label" aria-live="polite"></button>
+        <button id="next-month" class="icon-btn" aria-label="次の月">›</button>
+      </div>
+
+      <div id="calendar-grid" class="calendar-grid" aria-label="カレンダー"></div>
+
+      <div id="active-filter" class="active-filter hidden">
+        <span id="active-filter-text"></span>
+        <button id="clear-day-filter" class="clear-filter-btn">月を表示</button>
+      </div>
+
+      <div id="entry-list" class="entry-list"></div>
+      <p id="list-empty" class="empty-message hidden">この月の日記はまだありません。</p>
+    </section>
+
+    <!-- 検索ビュー -->
+    <section id="view-search" class="view hidden" data-view="search">
+      <div class="search-bar">
+        <input id="search-input" type="search" inputmode="search" placeholder="キーワードを入力…" autocomplete="off" autocorrect="off" autocapitalize="none">
+      </div>
+      <div id="search-results" class="entry-list"></div>
+      <p id="search-empty" class="empty-message hidden">一致する日記が見つかりません。</p>
+      <p id="search-hint" class="empty-message">タイトルや本文のキーワードで日記を検索できます。</p>
+    </section>
+
+    <!-- 新規 / 編集ビュー -->
+    <section id="view-new" class="view hidden" data-view="new">
+      <form id="entry-form" class="entry-form">
+        <label class="field-label" for="entry-date">日付</label>
+        <input id="entry-date" type="date" required>
+
+        <label class="field-label" for="entry-title">タイトル</label>
+        <input id="entry-title" type="text" placeholder="今日のタイトル（任意）" maxlength="100" autocomplete="off">
+
+        <label class="field-label">今日の気分</label>
+        <div id="mood-picker" class="mood-picker" role="radiogroup" aria-label="今日の気分">
+          <button type="button" class="mood-btn" data-mood="1" role="radio" aria-checked="false">
+            <span class="mood-emoji">😢</span><span class="mood-text">つらい</span>
+          </button>
+          <button type="button" class="mood-btn" data-mood="2" role="radio" aria-checked="false">
+            <span class="mood-emoji">😕</span><span class="mood-text">いまいち</span>
+          </button>
+          <button type="button" class="mood-btn" data-mood="3" role="radio" aria-checked="false">
+            <span class="mood-emoji">😐</span><span class="mood-text">ふつう</span>
+          </button>
+          <button type="button" class="mood-btn" data-mood="4" role="radio" aria-checked="false">
+            <span class="mood-emoji">🙂</span><span class="mood-text">いい感じ</span>
+          </button>
+          <button type="button" class="mood-btn" data-mood="5" role="radio" aria-checked="false">
+            <span class="mood-emoji">😄</span><span class="mood-text">最高</span>
+          </button>
+        </div>
+
+        <label class="field-label" for="entry-body">本文</label>
+        <textarea id="entry-body" rows="10" placeholder="今日あったこと、考えたこと…"></textarea>
+
+        <div class="form-actions">
+          <button type="button" id="delete-entry-btn" class="btn btn-danger hidden">削除</button>
+          <button type="submit" id="save-entry-btn" class="btn btn-primary">保存する</button>
+        </div>
+        <button type="button" id="cancel-edit-btn" class="btn btn-ghost hidden">編集をキャンセル</button>
+      </form>
+    </section>
+
+  </main>
+
+  <nav class="tab-bar" aria-label="画面切り替え">
+    <button class="tab-btn active" data-target="list">
+      <span class="tab-icon">📅</span><span class="tab-text">一覧</span>
+    </button>
+    <button class="tab-btn" data-target="search">
+      <span class="tab-icon">🔍</span><span class="tab-text">検索</span>
+    </button>
+    <button class="tab-btn" data-target="new">
+      <span class="tab-icon">✏️</span><span class="tab-text">新規</span>
+    </button>
+  </nav>
+
+</div>
+
+<div id="toast" class="toast hidden" role="status"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

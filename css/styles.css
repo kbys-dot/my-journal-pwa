@@ -21,8 +21,8 @@
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
 
-  --font: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN",
-          "Yu Gothic", "Segoe UI", Roboto, sans-serif;
+  --font: "Poppins", "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Sans",
+          "Hiragino Kaku Gothic ProN", "Yu Gothic", "Segoe UI", Roboto, sans-serif;
 }
 
 @media (prefers-color-scheme: light) {
@@ -350,6 +350,12 @@ main#views {
   color: var(--accent-strong);
   font-weight: 600;
   margin-bottom: 6px;
+}
+
+.prompt-season {
+  font-weight: 400;
+  color: var(--text-faint);
+  margin-left: 2px;
 }
 
 .prompt-text {

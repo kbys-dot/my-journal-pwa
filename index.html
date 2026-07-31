@@ -17,6 +17,11 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="icons/icon-192.png">
 
+<!-- Google Fonts: 英字 Poppins / 日本語 Noto Sans JP -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -61,7 +66,7 @@
     <!-- 新規 / 編集ビュー -->
     <section id="view-new" class="view hidden" data-view="new">
       <div id="prompt-card" class="prompt-card">
-        <div class="prompt-label">💡 今日のお題</div>
+        <div class="prompt-label">💡 今日のお題<span id="prompt-season" class="prompt-season"></span></div>
         <p id="prompt-text" class="prompt-text"></p>
         <div class="prompt-actions">
           <button type="button" id="prompt-shuffle" class="prompt-shuffle-btn">🔄 別のお題</button>

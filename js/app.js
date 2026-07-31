@@ -5,7 +5,7 @@
   const MOOD_EMOJI = { 1: "😢", 2: "😕", 3: "😐", 4: "🙂", 5: "😄" };
   const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
 
-  const PROMPTS = [
+  const GENERAL_PROMPTS = [
     "今日、一番小さく感じた「よかったこと」は何ですか？",
     "今日ありがとうと伝えたい人は誰ですか？",
     "今日の自分を一言で表すと？",
@@ -52,6 +52,57 @@
     "今の暮らしの中で、変えてみたいことは？",
     "今日、自分を大切にできたと思う瞬間は？",
   ];
+
+  const SEASONAL_PROMPTS = {
+    spring: [
+      "今年の桜を見て感じたことは？",
+      "春の陽気で心地よかった瞬間は？",
+      "新生活や新しい環境で感じていることは？",
+      "春に食べたくなる旬の食べ物は？",
+      "最近感じた春の匂いや風は？",
+      "この春、挑戦したい新しいことは？",
+      "春服やお気に入りの装いについて書いてみましょう",
+      "花粉や気候の変化で気づいたことは？",
+      "春休みや連休にしたいことは？",
+      "芽吹き始めた植物や自然の変化に気づきましたか？",
+    ],
+    summer: [
+      "今年の夏、楽しみにしていることは？",
+      "最近食べた冷たい食べ物や飲み物は？",
+      "花火や夏祭りの思い出はありますか？",
+      "暑さの中で見つけた涼しさは？",
+      "夏休みにやってみたいことは？",
+      "セミの声や夏の音で印象に残っているものは？",
+      "海や川、水辺での過ごし方について書いてみましょう",
+      "夏バテ対策や体調管理で意識していることは？",
+      "夕立や夕焼けなど、夏の空模様の思い出は？",
+      "冷房の効いた部屋で過ごす時間について",
+    ],
+    autumn: [
+      "紅葉を見て感じたことは？",
+      "秋に食べたい旬の味覚は？",
+      "涼しくなってきて感じる変化は？",
+      "読書の秋、最近読みたい本は？",
+      "秋の夜長にしたいことは？",
+      "運動会や文化祭など、秋のイベントの思い出は？",
+      "金木犀など秋の香りについて",
+      "衣替えで気づいたことは？",
+      "秋の澄んだ空気や空について",
+      "実りの季節、今年得られた成果は？",
+    ],
+    winter: [
+      "今年一年を振り返って、印象に残っていることは？",
+      "年末年始に楽しみにしていることは？",
+      "温かい飲み物や食べ物で癒されたものは？",
+      "雪や冬の景色について感じたことは？",
+      "クリスマスや年越しの思い出は？",
+      "新しい年に向けて叶えたい目標は？",
+      "寒い日に心が温まった出来事は？",
+      "冬支度で最近したことは？",
+      "こたつや暖房の効いた部屋での過ごし方は？",
+      "この一年、自分を支えてくれたものは？",
+    ],
+  };
 
   /* ===== ストレージ層 ===== */
 
@@ -125,8 +176,23 @@
     return Math.abs(hash);
   }
 
-  function todayPromptIndex() {
-    return hashString(todayStr()) % PROMPTS.length;
+  function seasonForMonth(monthIndex) {
+    // monthIndex: 0-11 (0 = 1月)
+    if (monthIndex >= 2 && monthIndex <= 4) return "spring"; // 3-5月
+    if (monthIndex >= 5 && monthIndex <= 7) return "summer"; // 6-8月
+    if (monthIndex >= 8 && monthIndex <= 10) return "autumn"; // 9-11月
+    return "winter"; // 12-2月
+  }
+
+  const SEASON_LABEL = { spring: "春", summer: "夏", autumn: "秋", winter: "冬" };
+
+  function todayPromptPool() {
+    const season = seasonForMonth(new Date().getMonth());
+    return GENERAL_PROMPTS.concat(SEASONAL_PROMPTS[season]);
+  }
+
+  function todayPromptIndex(pool) {
+    return hashString(todayStr()) % pool.length;
   }
 
   /* ===== 状態 ===== */
@@ -137,6 +203,7 @@
     calendarMonth: new Date().getMonth(), // 0-11
     selectedDay: null, // "YYYY-MM-DD" | null
     editingId: null,
+    promptPool: [],
     promptIndex: null,
   };
 
@@ -334,30 +401,34 @@
   const cancelEditBtn = document.getElementById("cancel-edit-btn");
   const promptCard = document.getElementById("prompt-card");
   const promptText = document.getElementById("prompt-text");
+  const promptSeason = document.getElementById("prompt-season");
   let selectedMood = null;
 
   function renderPrompt() {
-    promptText.textContent = PROMPTS[state.promptIndex];
+    promptText.textContent = state.promptPool[state.promptIndex];
   }
 
   function showTodayPrompt() {
-    state.promptIndex = todayPromptIndex();
+    const season = seasonForMonth(new Date().getMonth());
+    state.promptPool = todayPromptPool();
+    state.promptIndex = todayPromptIndex(state.promptPool);
+    promptSeason.textContent = `（${SEASON_LABEL[season]}）`;
     promptCard.classList.remove("hidden");
     renderPrompt();
   }
 
   document.getElementById("prompt-shuffle").addEventListener("click", () => {
-    if (PROMPTS.length <= 1) return;
+    if (state.promptPool.length <= 1) return;
     let next;
     do {
-      next = Math.floor(Math.random() * PROMPTS.length);
+      next = Math.floor(Math.random() * state.promptPool.length);
     } while (next === state.promptIndex);
     state.promptIndex = next;
     renderPrompt();
   });
 
   document.getElementById("prompt-use").addEventListener("click", () => {
-    titleInput.value = PROMPTS[state.promptIndex];
+    titleInput.value = state.promptPool[state.promptIndex];
     bodyInput.focus();
   });
 
